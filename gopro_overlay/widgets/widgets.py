@@ -51,7 +51,10 @@ def icon(file, at, transform=lambda x: x) -> Widget:
     return Drawable(at, transform(image))
 
 
-def simple_icon(at, file, size=64, invert=False):
+def simple_icon(at, file, size=64, invert=False, visible=True):
+    print(visible)
+    if not visible:
+        return EmptyDrawable()
     return icon(file, at, transform=compose(
         functools.partial(transform_resize, (size, size)) if size else transform_identity,
         transform_rgba,

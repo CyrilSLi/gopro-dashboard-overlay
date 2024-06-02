@@ -454,13 +454,14 @@ class Widgets:
             stroke_width=iattrib(element, "outline_width", d=2),
         )
 
-    @allow_attributes({"x", "y", "file", "size", "invert"})
-    def create_icon(self, element, **kwargs) -> Widget:
+    @allow_attributes({"x", "y", "file", "size", "invert", "visible"})
+    def create_icon(self, element, entry, **kwargs) -> Widget:
         return simple_icon(
             at=at(element),
             file=attrib(element, "file"),
             size=iattrib(element, "size", d=64),
-            invert=battrib(element, "invert", d=True)
+            invert=battrib(element, "invert", d=True),
+            visible=metric_value(metric_accessor_from(attrib(element, "visible", d="custom.field."))(entry()), lambda x: x, lambda x: x, lambda x: x, default=True)()
         )
 
     @allow_attributes({"x", "y", "size", "format", "truncate", "align", "cache", "rgb", "outline", "outline_width"})
