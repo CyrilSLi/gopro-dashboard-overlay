@@ -74,19 +74,23 @@ cache = ImageTileCache()
 
 
 def my_render_map(map, tiles, downloader, **kwargs):
-    tile_url = map.provider.tile_url
+    layers = []
+    for layer in map:
+        tile_url = layer.provider.tile_url
 
-    coord, offset = _find_top_left_tile(map)
-    coords = _tile_coords(map, coord, offset)
-    offsets = _tile_offsets(map, offset)
-    urls = (tile_url(c, map.zoom) for c in coords)
-    tiles = list((Tile(u, o, None, None) for u, o in zip(urls, offsets)))
+        coord, offset = _find_top_left_tile(layer)
+        coords = _tile_coords(layer, coord, offset)
+        offsets = _tile_offsets(layer, offset)
+        urls = (tile_url(c, layer.zoom) for c in coords)
+        print (layer, layer.provider, layer.provider.tile_url, list (urls))
+        raise SystemExit
+        tiles = list((Tile(u, o, None, None) for u, o in zip(urls, offsets)))
 
-    provider = map.provider
+        provider = layer.provider
 
-    tiles = cache.populate(downloader, tiles, _error_image(provider.tile_width, provider.tile_height))
+        layers.append(cache.populate(downloader, tiles, _error_image(provider.tile_width, provider.tile_height)))
 
-    image = PIL.Image.new('RGBA', tuple(map.size))
+    image = PIL.Image.new('RGBA', tuple(layer.size))
 
     for tile in tiles:
         image.paste(tile.img, tile.offset)
